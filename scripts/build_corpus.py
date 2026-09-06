@@ -251,7 +251,7 @@ def main() -> None:
     parser.add_argument("--source", choices=["wikipedia", "aozora", "both"], default="wikipedia")
     parser.add_argument("--out", default="data/pretrain_corpus.txt")
     parser.add_argument("--target_chars", type=int, default=1_000_000, help="収集する目標文字数")
-    parser.add_argument("--batch_size", type=int, default=20, help="Wikipedia: 1回のAPI呼び出しで取得する記事数(上限20)")
+    parser.add_argument("--batch_size", type=int, default=500, help="Wikipedia: 1回のAPI呼び出しで取得する記事数(未認証ユーザーの上限500)")
     parser.add_argument("--min_len", type=int, default=200, help="この文字数未満のテキストは捨てる")
     parser.add_argument("--sleep", type=float, default=0.5, help="APIへの負荷軽減のためのリクエスト間隔(秒)")
     parser.add_argument("--append", action="store_true", help="既存のoutファイルに追記する(既定は上書き)")

@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import re
 import shutil
+import socket
 import subprocess
 import sys
 import threading
@@ -24,6 +25,7 @@ from chatai.tokenizer import CharTokenizer
 ROOT = Path(__file__).parent
 CHECKPOINT_DIR = ROOT / "checkpoints"
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
+HOSTNAME = socket.gethostname()
 
 app = Flask(__name__)
 
@@ -53,7 +55,7 @@ def load_model() -> None:
 
 @app.route("/")
 def index():
-    return render_template("index.html")
+    return render_template("index.html", hostname=HOSTNAME, device=DEVICE)
 
 
 @app.route("/api/chat", methods=["POST"])
@@ -206,7 +208,7 @@ def _run_job(name: str, cmd: list[str]) -> None:
 
 @app.route("/train")
 def train_page():
-    return render_template("train.html", device=DEVICE)
+    return render_template("train.html", hostname=HOSTNAME, device=DEVICE)
 
 
 @app.route("/api/train/start", methods=["POST"])

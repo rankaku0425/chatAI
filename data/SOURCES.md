@@ -2,13 +2,13 @@
 
 このファイルは `scripts/build_corpus.py` によって自動生成されます。
 
-総件数: 213 / 総文字数: 1,790,391
+総件数: 224 / 総文字数: 1,907,090
 
 ## ソース別集計
 
 | 収集元 | 件数 | 文字数 |
 |---|---|---|
-| aozora | 76 | 1,482,291 |
+| aozora | 87 | 1,598,990 |
 | wikipedia | 137 | 308,100 |
 
 ## 収集した個別データ一覧
@@ -228,3 +228,14 @@
 | aozora | 人生の意義(北村透谷) | https://www.aozora.gr.jp/cards/000157/files/43485_ruby_16179.zip | 3,228 | 2026-09-06T15:00:13+00:00 |
 | aozora | 鏡花との一夕(折口信夫) | https://www.aozora.gr.jp/cards/000933/files/33201_ruby_14162.zip | 3,226 | 2026-09-06T15:00:14+00:00 |
 | aozora | 坊つちやん「遺蹟めぐり」(岡本一平) | https://www.aozora.gr.jp/cards/000239/files/56531_ruby_77748.zip | 10,350 | 2026-09-06T15:00:16+00:00 |
+| aozora | 学問の自由(寺田寅彦) | https://www.aozora.gr.jp/cards/000042/files/43535_ruby_24441.zip | 3,069 | 2026-09-06T15:02:55+00:00 |
+| aozora | ビルヂングと月(牧野信一) | https://www.aozora.gr.jp/cards/000183/files/45297_ruby_39765.zip | 2,726 | 2026-09-06T15:02:56+00:00 |
+| aozora | 森先生の事(永井荷風) | https://www.aozora.gr.jp/cards/001341/files/58604_ruby_65162.zip | 1,062 | 2026-09-06T15:02:57+00:00 |
+| aozora | 早耳三次捕物聞書(林不忘) | https://www.aozora.gr.jp/cards/000290/files/48041_ruby_31600.zip | 10,881 | 2026-09-06T15:02:57+00:00 |
+| aozora | 判官三郎の正体(野村胡堂) | https://www.aozora.gr.jp/cards/001670/files/56717_ruby_57463.zip | 13,165 | 2026-09-06T15:02:58+00:00 |
+| aozora | 淡島寒月氏(幸田露伴) | https://www.aozora.gr.jp/cards/000051/files/47086_ruby_27855.zip | 3,089 | 2026-09-06T15:02:58+00:00 |
+| aozora | 栗の花の咲くころ(佐左木俊郎) | https://www.aozora.gr.jp/cards/000134/files/718_ruby_20853.zip | 6,760 | 2026-09-06T15:02:59+00:00 |
+| aozora | 或る部落の五つの話(佐左木俊郎) | https://www.aozora.gr.jp/cards/000134/files/46176_ruby_27380.zip | 6,120 | 2026-09-06T15:03:00+00:00 |
+| aozora | 今戸心中(広津柳浪) | https://www.aozora.gr.jp/cards/000295/files/42145_ruby_22356.zip | 37,863 | 2026-09-06T15:03:00+00:00 |
+| aozora | 花宵(山本周五郎) | https://www.aozora.gr.jp/cards/001869/files/57701_ruby_78188.zip | 9,294 | 2026-09-06T15:03:01+00:00 |
+| aozora | 右門捕物帖(佐々木味津三) | https://www.aozora.gr.jp/cards/000111/files/555_ruby_18948.zip | 22,670 | 2026-09-06T15:03:02+00:00 |

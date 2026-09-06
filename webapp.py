@@ -7,9 +7,12 @@
 """
 from __future__ import annotations
 
+import re
+import shutil
 import subprocess
 import sys
 import threading
+from datetime import datetime
 from pathlib import Path
 
 import torch
@@ -61,17 +64,18 @@ def api_chat():
     if _model is None or _tokenizer is None:
         return jsonify({"error": "モデルが見つかりません。先に学習を実行してください。"}), 400
 
-    user_message = (request.json or {}).get("message", "")
+    body = request.json or {}
+    user_message = body.get("message", "")
     prompt = _history + f"User: {user_message}\nAI:"
     idx = torch.tensor([_tokenizer.encode(prompt)], dtype=torch.long, device=DEVICE)
 
     out = _model.generate(
         idx,
         max_new_tokens=100,
-        temperature=0.8,
-        top_k=20,
-        top_p=0.9,
-        repetition_penalty=1.3,
+        temperature=float(body.get("temperature", 0.8)),
+        top_k=int(body.get("top_k", 20)),
+        top_p=float(body.get("top_p", 0.9)),
+        repetition_penalty=float(body.get("repetition_penalty", 1.3)),
     )
     generated = _tokenizer.decode(out[0].tolist())
 
@@ -139,6 +143,32 @@ JOB_COMMANDS = {
     "finetune": _finetune_cmd,
 }
 
+# ジョブ名 -> 上書きされるチェックポイントファイル(バックアップ対象)
+JOB_CHECKPOINT = {
+    "pretrain": CHECKPOINT_DIR / "pretrain.pt",
+    "finetune": CHECKPOINT_DIR / "model.pt",
+}
+
+LOSS_PATTERN = re.compile(r"step (\d+): train loss ([\d.]+), val loss ([\d.]+)")
+
+
+def _backup_checkpoint(path: Path) -> None:
+    if not path.exists():
+        return
+    backup_dir = CHECKPOINT_DIR / "backups"
+    backup_dir.mkdir(parents=True, exist_ok=True)
+    stamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    shutil.copy2(path, backup_dir / f"{path.stem}_{stamp}{path.suffix}")
+
+
+def _parse_loss_history(log_lines: list[str]) -> list[dict]:
+    history = []
+    for line in log_lines:
+        m = LOSS_PATTERN.search(line)
+        if m:
+            history.append({"step": int(m.group(1)), "train": float(m.group(2)), "val": float(m.group(3))})
+    return history
+
 
 def _run_job(name: str, cmd: list[str]) -> None:
     proc = subprocess.Popen(
@@ -184,10 +214,27 @@ def api_train_start():
         except ValueError as e:
             return jsonify({"error": str(e)}), 400
 
+        if name in JOB_CHECKPOINT:
+            _backup_checkpoint(JOB_CHECKPOINT[name])
+
         _jobs[name] = {"log": [], "running": True, "returncode": None, "proc": None}
 
     thread = threading.Thread(target=_run_job, args=(name, cmd), daemon=True)
     thread.start()
+    return jsonify({"ok": True})
+
+
+@app.route("/api/train/stop", methods=["POST"])
+def api_train_stop():
+    name = (request.json or {}).get("job")
+    with _jobs_lock:
+        job = _jobs.get(name)
+        if not job or not job.get("running"):
+            return jsonify({"error": "実行中のジョブがありません。"}), 400
+        proc = job.get("proc")
+
+    if proc is not None:
+        proc.terminate()
     return jsonify({"ok": True})
 
 
@@ -200,6 +247,7 @@ def api_train_status():
                     "running": j["running"],
                     "log": "\n".join(j["log"]),
                     "returncode": j["returncode"],
+                    "loss_history": _parse_loss_history(j["log"]) if name in JOB_CHECKPOINT else [],
                 }
                 for name, j in _jobs.items()
             }

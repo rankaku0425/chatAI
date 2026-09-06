@@ -8,7 +8,8 @@
   section { border: 1px solid #ccc; border-radius: 6px; padding: 15px; margin-bottom: 20px; }
   pre { background: #111; color: #0f0; padding: 10px; height: 220px; overflow-y: auto; white-space: pre-wrap; border-radius: 6px; }
   label { display: inline-block; width: 140px; }
-  button { padding: 6px 14px; }
+  button { padding: 6px 14px; margin-right: 6px; }
+  canvas { background: #fff; border: 1px solid #ccc; border-radius: 6px; margin-top: 8px; }
 </style>
 </head>
 <body>
@@ -27,26 +28,33 @@
   <label>目標文字数</label>
   <input type="number" id="bc-target" value="1000000"><br><br>
   <button onclick="startBuildCorpus()">実行</button>
+  <button onclick="stopJob('build_corpus')">停止</button>
   <span id="status-build_corpus"></span>
   <pre id="log-build_corpus"></pre>
 </section>
 
 <section>
   <h2>2. 事前学習 (pretrain)</h2>
+  <p style="color:#a00">実行すると既存の checkpoints/pretrain.pt は自動的に checkpoints/backups/ へ退避されます。</p>
   <label>max_steps</label>
   <input type="number" id="pt-steps" value="5000"><br><br>
   <button onclick="startPretrain()">実行</button>
+  <button onclick="stopJob('pretrain')">停止</button>
   <span id="status-pretrain"></span>
   <pre id="log-pretrain"></pre>
+  <canvas id="chart-pretrain" width="740" height="200"></canvas>
 </section>
 
 <section>
   <h2>3. ファインチューニング (finetune)</h2>
+  <p style="color:#a00">実行すると既存の checkpoints/model.pt は自動的に checkpoints/backups/ へ退避されます。</p>
   <label>max_steps</label>
   <input type="number" id="ft-steps" value="3000"><br><br>
   <button onclick="startFinetune()">実行</button>
+  <button onclick="stopJob('finetune')">停止</button>
   <span id="status-finetune"></span>
   <pre id="log-finetune"></pre>
+  <canvas id="chart-finetune" width="740" height="200"></canvas>
 </section>
 
 <script>
@@ -60,6 +68,16 @@ async function startJob(name, params) {
   if (data.error) alert(data.error);
 }
 
+async function stopJob(name) {
+  const res = await fetch("/api/train/stop", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ job: name }),
+  });
+  const data = await res.json();
+  if (data.error) alert(data.error);
+}
+
 function startBuildCorpus() {
   startJob("build_corpus", {
     source: document.getElementById("bc-source").value,
@@ -68,11 +86,57 @@ function startBuildCorpus() {
 }
 
 function startPretrain() {
+  if (!confirm("既存のcheckpoints/pretrain.ptはbackups/へ退避してから上書きされます。実行しますか？")) return;
   startJob("pretrain", { max_steps: parseInt(document.getElementById("pt-steps").value, 10) });
 }
 
 function startFinetune() {
+  if (!confirm("既存のcheckpoints/model.ptはbackups/へ退避してから上書きされます。実行しますか？")) return;
   startJob("finetune", { max_steps: parseInt(document.getElementById("ft-steps").value, 10) });
+}
+
+function drawLossChart(canvasId, history) {
+  const canvas = document.getElementById(canvasId);
+  const ctx = canvas.getContext("2d");
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  if (!history || history.length === 0) return;
+
+  const pad = 30;
+  const w = canvas.width - pad * 2;
+  const h = canvas.height - pad * 2;
+  const maxLoss = Math.max(...history.map(p => Math.max(p.train, p.val)));
+  const minLoss = Math.min(...history.map(p => Math.min(p.train, p.val)));
+  const range = (maxLoss - minLoss) || 1;
+  const maxStep = history[history.length - 1].step || 1;
+
+  function pointXY(step, loss) {
+    const x = pad + (step / maxStep) * w;
+    const y = pad + h - ((loss - minLoss) / range) * h;
+    return [x, y];
+  }
+
+  function drawLine(key, color) {
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    history.forEach((p, i) => {
+      const [x, y] = pointXY(p.step, p[key]);
+      if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+    });
+    ctx.stroke();
+  }
+  drawLine("train", "#06c");
+  drawLine("val", "#c60");
+
+  ctx.fillStyle = "#000";
+  ctx.font = "12px sans-serif";
+  ctx.fillText("train loss", pad, 15);
+  ctx.fillStyle = "#06c";
+  ctx.fillRect(pad + 60, 8, 10, 10);
+  ctx.fillStyle = "#000";
+  ctx.fillText("val loss", pad + 140, 15);
+  ctx.fillStyle = "#c60";
+  ctx.fillRect(pad + 195, 8, 10, 10);
 }
 
 async function pollStatus() {
@@ -87,6 +151,9 @@ async function pollStatus() {
       statusEl.textContent = data[name].running
         ? "実行中..."
         : (data[name].returncode === 0 ? "完了" : data[name].returncode !== null ? "エラー終了" : "");
+      if (name === "pretrain" || name === "finetune") {
+        drawLossChart("chart-" + name, data[name].loss_history);
+      }
     }
   }
 }

@@ -3,6 +3,10 @@ checkpoints/
 data/pretrain_corpus.txt
 data/.cache/
 
+# マシンごとに生成されるデータ収集元ログ(PC/RunPodで別々に増えるためgit管理外にする)
+data/sources.csv
+data/SOURCES.md
+
 # Python
 __pycache__/
 *.pyc

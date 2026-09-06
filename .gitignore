@@ -1,0 +1,13 @@
+# 学習で生成される大容量ファイル(GitHubには載せない)
+checkpoints/
+data/pretrain_corpus.txt
+data/.cache/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Claude Codeのローカル設定
+.claude/

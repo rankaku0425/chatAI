@@ -48,6 +48,9 @@ bash runpod/pretrain.sh --batch_size 32
 
 # コーパスを小さくしたい場合
 TARGET_CHARS=5000000 bash runpod/build_corpus.sh
+
+# 青空文庫だけで学習したい場合(既定はWikipedia+青空文庫の両方)
+SOURCE=aozora bash runpod/build_corpus.sh
 ```
 
 ## 4. 学習済みモデルをローカルに持ち帰る

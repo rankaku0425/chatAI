@@ -2,14 +2,14 @@
 
 このファイルは `scripts/build_corpus.py` によって自動生成されます。
 
-総件数: 167 / 総文字数: 1,679,279
+総件数: 213 / 総文字数: 1,790,391
 
 ## ソース別集計
 
 | 収集元 | 件数 | 文字数 |
 |---|---|---|
-| aozora | 62 | 1,424,062 |
-| wikipedia | 105 | 255,217 |
+| aozora | 76 | 1,482,291 |
+| wikipedia | 137 | 308,100 |
 
 ## 収集した個別データ一覧
 
@@ -182,3 +182,49 @@
 | aozora | 大塩平八郎(森鴎外) | https://www.aozora.gr.jp/cards/000129/files/2298_ruby_6609.zip | 47,365 | 2026-09-06T10:56:17+00:00 |
 | aozora | わかりきった話(国枝史郎) | https://www.aozora.gr.jp/cards/000255/files/47272_ruby_57341.zip | 1,296 | 2026-09-06T10:56:17+00:00 |
 | aozora | 若い僧侶の話(スティーブンソンロバート・ルイス) | https://www.aozora.gr.jp/cards/000888/files/51164_txt_66352.zip | 15,705 | 2026-09-06T10:56:18+00:00 |
+| wikipedia | 瞳の奥の秘密 | https://ja.wikipedia.org/wiki/瞳の奥の秘密 | 943 | 2026-09-06T14:57:57+00:00 |
+| wikipedia | 福徳岡ノ場 | https://ja.wikipedia.org/wiki/福徳岡ノ場 | 1,803 | 2026-09-06T14:57:57+00:00 |
+| wikipedia | 民間都市再生事業計画認定制度 | https://ja.wikipedia.org/wiki/民間都市再生事業計画認定制度 | 4,688 | 2026-09-06T14:57:57+00:00 |
+| wikipedia | 前旗 | https://ja.wikipedia.org/wiki/前旗 | 217 | 2026-09-06T14:57:58+00:00 |
+| wikipedia | 徳川宗将 | https://ja.wikipedia.org/wiki/徳川宗将 | 978 | 2026-09-06T14:57:59+00:00 |
+| wikipedia | 山下知二郎 | https://ja.wikipedia.org/wiki/山下知二郎 | 401 | 2026-09-06T14:57:59+00:00 |
+| wikipedia | バンカー (役馬) | https://ja.wikipedia.org/wiki/バンカー_(役馬) | 2,410 | 2026-09-06T14:57:59+00:00 |
+| wikipedia | マントル細胞リンパ腫 | https://ja.wikipedia.org/wiki/マントル細胞リンパ腫 | 1,436 | 2026-09-06T14:58:00+00:00 |
+| wikipedia | 山本徹 (1970年生の政治家) | https://ja.wikipedia.org/wiki/山本徹_(1970年生の政治家) | 1,066 | 2026-09-06T14:58:00+00:00 |
+| wikipedia | フレームシフト突然変異 | https://ja.wikipedia.org/wiki/フレームシフト突然変異 | 753 | 2026-09-06T14:58:00+00:00 |
+| wikipedia | 諸富郵便局 | https://ja.wikipedia.org/wiki/諸富郵便局 | 913 | 2026-09-06T14:58:00+00:00 |
+| wikipedia | 佐藤長 | https://ja.wikipedia.org/wiki/佐藤長 | 812 | 2026-09-06T14:58:01+00:00 |
+| wikipedia | 証-soul mate- | https://ja.wikipedia.org/wiki/証-soul_mate- | 1,091 | 2026-09-06T14:58:02+00:00 |
+| wikipedia | ブラヴォケラトプス | https://ja.wikipedia.org/wiki/ブラヴォケラトプス | 1,581 | 2026-09-06T14:58:02+00:00 |
+| wikipedia | 蘇軾 | https://ja.wikipedia.org/wiki/蘇軾 | 7,749 | 2026-09-06T14:58:02+00:00 |
+| wikipedia | 七道西町 | https://ja.wikipedia.org/wiki/七道西町 | 764 | 2026-09-06T14:58:03+00:00 |
+| wikipedia | 鹿児島県立甲南高等学校の人物一覧 | https://ja.wikipedia.org/wiki/鹿児島県立甲南高等学校の人物一覧 | 2,523 | 2026-09-06T14:58:03+00:00 |
+| wikipedia | 川保天骨 | https://ja.wikipedia.org/wiki/川保天骨 | 3,792 | 2026-09-06T14:58:04+00:00 |
+| wikipedia | 郷ノ浦中継局 | https://ja.wikipedia.org/wiki/郷ノ浦中継局 | 480 | 2026-09-06T14:59:07+00:00 |
+| wikipedia | 2024年パリオリンピックのギニア選手団 | https://ja.wikipedia.org/wiki/2024年パリオリンピックのギニア選手団 | 505 | 2026-09-06T14:59:08+00:00 |
+| wikipedia | フランス・ドイツ間の国際列車 | https://ja.wikipedia.org/wiki/フランス・ドイツ間の国際列車 | 6,683 | 2026-09-06T14:59:08+00:00 |
+| wikipedia | Shine&Shine | https://ja.wikipedia.org/wiki/Shine&Shine | 231 | 2026-09-06T14:59:08+00:00 |
+| wikipedia | 岡村南奈 | https://ja.wikipedia.org/wiki/岡村南奈 | 595 | 2026-09-06T14:59:09+00:00 |
+| wikipedia | ザミンダー | https://ja.wikipedia.org/wiki/ザミンダー | 1,210 | 2026-09-06T14:59:09+00:00 |
+| wikipedia | ホルン (曖昧さ回避) | https://ja.wikipedia.org/wiki/ホルン_(曖昧さ回避) | 327 | 2026-09-06T14:59:10+00:00 |
+| wikipedia | 神舟6号 | https://ja.wikipedia.org/wiki/神舟6号 | 361 | 2026-09-06T14:59:10+00:00 |
+| wikipedia | 高橋町 | https://ja.wikipedia.org/wiki/高橋町 | 395 | 2026-09-06T14:59:10+00:00 |
+| wikipedia | 山田幸夫 (総務官僚) | https://ja.wikipedia.org/wiki/山田幸夫_(総務官僚) | 637 | 2026-09-06T14:59:11+00:00 |
+| wikipedia | SafeDisc | https://ja.wikipedia.org/wiki/SafeDisc | 789 | 2026-09-06T15:00:04+00:00 |
+| wikipedia | 大宮神社 (山鹿市) | https://ja.wikipedia.org/wiki/大宮神社_(山鹿市) | 904 | 2026-09-06T15:00:04+00:00 |
+| wikipedia | 赤尾大堤 | https://ja.wikipedia.org/wiki/赤尾大堤 | 690 | 2026-09-06T15:00:04+00:00 |
+| wikipedia | 石毛佐和 | https://ja.wikipedia.org/wiki/石毛佐和 | 5,156 | 2026-09-06T15:00:05+00:00 |
+| aozora | 砂をかむ(坂口安吾) | https://www.aozora.gr.jp/cards/001095/files/45739_txt_35759.zip | 1,048 | 2026-09-06T15:00:07+00:00 |
+| aozora | 源氏物語(紫式部) | https://www.aozora.gr.jp/cards/000052/files/5030_ruby_10218.zip | 13,197 | 2026-09-06T15:00:08+00:00 |
+| aozora | 無趣味(太宰治) | https://www.aozora.gr.jp/cards/000035/files/45671_ruby_20800.zip | 352 | 2026-09-06T15:00:08+00:00 |
+| aozora | 新しい船出(宮本百合子) | https://www.aozora.gr.jp/cards/000311/files/3107_ruby_10698.zip | 8,559 | 2026-09-06T15:00:09+00:00 |
+| aozora | 銅像と老人(小川未明) | https://www.aozora.gr.jp/cards/001475/files/52577_ruby_72788.zip | 3,723 | 2026-09-06T15:00:09+00:00 |
+| aozora | 芳賀先生と日本主義(高橋竜雄) | https://www.aozora.gr.jp/cards/001690/files/54996_txt_66909.zip | 1,931 | 2026-09-06T15:00:10+00:00 |
+| aozora | 西洋画のやうな日本画(芥川竜之介) | https://www.aozora.gr.jp/cards/000879/files/3756_ruby_27225.zip | 980 | 2026-09-06T15:00:10+00:00 |
+| aozora | レ・ミゼラブル(豊島与志雄) | https://www.aozora.gr.jp/cards/000906/files/46861_ruby_25026.zip | 493 | 2026-09-06T15:00:11+00:00 |
+| aozora | 沙漠の美姫(国枝史郎) | https://www.aozora.gr.jp/cards/000255/files/47422_ruby_72973.zip | 7,001 | 2026-09-06T15:00:12+00:00 |
+| aozora | 東京に生れて(芥川竜之介) | https://www.aozora.gr.jp/cards/000879/files/45623_ruby_20632.zip | 962 | 2026-09-06T15:00:12+00:00 |
+| aozora | 特攻隊に捧ぐ(坂口安吾) | https://www.aozora.gr.jp/cards/001095/files/45201_ruby_22648.zip | 3,179 | 2026-09-06T15:00:13+00:00 |
+| aozora | 人生の意義(北村透谷) | https://www.aozora.gr.jp/cards/000157/files/43485_ruby_16179.zip | 3,228 | 2026-09-06T15:00:13+00:00 |
+| aozora | 鏡花との一夕(折口信夫) | https://www.aozora.gr.jp/cards/000933/files/33201_ruby_14162.zip | 3,226 | 2026-09-06T15:00:14+00:00 |
+| aozora | 坊つちやん「遺蹟めぐり」(岡本一平) | https://www.aozora.gr.jp/cards/000239/files/56531_ruby_77748.zip | 10,350 | 2026-09-06T15:00:16+00:00 |

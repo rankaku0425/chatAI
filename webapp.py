@@ -114,8 +114,9 @@ def _build_corpus_cmd(params: dict) -> list[str]:
 
 
 def _pretrain_cmd(params: dict) -> list[str]:
-    max_steps = int(params.get("max_steps", 5000))
-    return [
+    # GPU(RunPod)ではrunpod/pretrain.shと同じ本格規模設定を使う。CPU(自宅)ではtrain.pyのデフォルト(小規模)のまま。
+    max_steps = int(params.get("max_steps", 20000 if DEVICE == "cuda" else 5000))
+    cmd = [
         sys.executable, "-u", "train.py",
         "--stage", "pretrain",
         "--data", "data/pretrain_corpus.txt",
@@ -123,11 +124,18 @@ def _pretrain_cmd(params: dict) -> list[str]:
         "--device", DEVICE,
         "--max_steps", str(max_steps),
     ]
+    if DEVICE == "cuda":
+        cmd += [
+            "--n_layer", "12", "--n_head", "12", "--n_embd", "384",
+            "--block_size", "256", "--batch_size", "64", "--eval_interval", "500",
+        ]
+    return cmd
 
 
 def _finetune_cmd(params: dict) -> list[str]:
+    # GPU(RunPod)ではrunpod/finetune.shと同じ設定(lr 1e-4)を使う。CPU(自宅)ではtrain.pyのデフォルトのまま。
     max_steps = int(params.get("max_steps", 3000))
-    return [
+    cmd = [
         sys.executable, "-u", "train.py",
         "--stage", "finetune",
         "--data", "data/conversations.txt",
@@ -135,6 +143,9 @@ def _finetune_cmd(params: dict) -> list[str]:
         "--device", DEVICE,
         "--max_steps", str(max_steps),
     ]
+    if DEVICE == "cuda":
+        cmd += ["--lr", "1e-4", "--eval_interval", "200"]
+    return cmd
 
 
 JOB_COMMANDS = {
@@ -195,7 +206,7 @@ def _run_job(name: str, cmd: list[str]) -> None:
 
 @app.route("/train")
 def train_page():
-    return render_template("train.html")
+    return render_template("train.html", device=DEVICE)
 
 
 @app.route("/api/train/start", methods=["POST"])

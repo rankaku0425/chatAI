@@ -15,6 +15,11 @@
 <body>
 <h1>学習操作パネル</h1>
 <p><a href="/">チャットへ戻る</a></p>
+<p style="color:#a00">
+  ※このジョブは <b>webapp.pyを起動しているマシン上</b> で実行されます(このブラウザを開いているPCではありません)。<br>
+  実行デバイス: <b>{{ device }}</b>
+  {% if device == "cuda" %}(GPU検出 → RunPod本格規模設定を使用){% else %}(CPUのみ → 自宅小規模設定を使用。RunPodで回したい場合はRunPod側でwebapp.pyを起動してください){% endif %}
+</p>
 <p style="color:#a00">※3つのジョブは同時に実行できません(1つずつ順番に実行してください)。</p>
 
 <section>

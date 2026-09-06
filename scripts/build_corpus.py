@@ -21,8 +21,10 @@ import csv
 import io
 import random
 import re
+import threading
 import time
 import zipfile
+from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -123,36 +125,56 @@ def fetch_wikipedia_batch(batch_size: int) -> list[dict]:
     return [{"title": p.get("title", ""), "extract": p.get("extract", "")} for p in pages.values()]
 
 
-def collect_wikipedia(out_file, target_chars: int, batch_size: int, min_len: int, sleep: float) -> int:
+def collect_wikipedia(
+    out_file, target_chars: int, batch_size: int, min_len: int, sleep: float, workers: int = 1
+) -> int:
     total = 0
     seen_titles: set[str] = set()
+    lock = threading.Lock()
 
-    while total < target_chars:
-        try:
-            articles = fetch_wikipedia_batch(batch_size)
-        except requests.RequestException as e:
-            is_rate_limited = getattr(e, "response", None) is not None and e.response.status_code == 429
-            wait = 10 if is_rate_limited else 2
-            print(f"[wikipedia] リクエスト失敗、{wait}秒待ってリトライします: {e}")
-            time.sleep(wait)
-            continue
+    def worker() -> None:
+        nonlocal total
+        while True:
+            with lock:
+                if total >= target_chars:
+                    return
 
-        for article in articles:
-            text = article["extract"].strip()
-            title = article["title"]
-            if len(text) < min_len or title in seen_titles:
+            try:
+                articles = fetch_wikipedia_batch(batch_size)
+            except requests.RequestException as e:
+                is_rate_limited = getattr(e, "response", None) is not None and e.response.status_code == 429
+                wait = 10 if is_rate_limited else 2
+                print(f"[wikipedia] リクエスト失敗、{wait}秒待ってリトライします: {e}")
+                time.sleep(wait)
                 continue
-            seen_titles.add(title)
 
-            out_file.write(text)
-            out_file.write("\n\n")
-            total += len(text)
+            for article in articles:
+                text = article["extract"].strip()
+                title = article["title"]
+                if len(text) < min_len:
+                    continue
 
-            url = "https://ja.wikipedia.org/wiki/" + title.replace(" ", "_")
-            append_source("wikipedia", title, url, len(text))
+                with lock:
+                    if title in seen_titles or total >= target_chars:
+                        continue
+                    seen_titles.add(title)
+                    out_file.write(text)
+                    out_file.write("\n\n")
+                    total += len(text)
 
-        print(f"[wikipedia] 収集済み: {total:,} / {target_chars:,} 文字")
-        time.sleep(sleep)
+                    url = "https://ja.wikipedia.org/wiki/" + title.replace(" ", "_")
+                    append_source("wikipedia", title, url, len(text))
+                    print(f"[wikipedia] 収集済み: {total:,} / {target_chars:,} 文字")
+
+            time.sleep(sleep)
+
+    if workers <= 1:
+        worker()
+    else:
+        with ThreadPoolExecutor(max_workers=workers) as executor:
+            futures = [executor.submit(worker) for _ in range(workers)]
+            for f in futures:
+                f.result()
 
     return total
 
@@ -254,6 +276,7 @@ def main() -> None:
     parser.add_argument("--batch_size", type=int, default=500, help="Wikipedia: 1回のAPI呼び出しで取得する記事数(未認証ユーザーの上限500)")
     parser.add_argument("--min_len", type=int, default=200, help="この文字数未満のテキストは捨てる")
     parser.add_argument("--sleep", type=float, default=0.5, help="APIへの負荷軽減のためのリクエスト間隔(秒)")
+    parser.add_argument("--workers", type=int, default=4, help="Wikipedia: 並列に投げるリクエストのワーカー数")
     parser.add_argument("--append", action="store_true", help="既存のoutファイルに追記する(既定は上書き)")
     args = parser.parse_args()
 
@@ -264,12 +287,12 @@ def main() -> None:
     with out_path.open(mode, encoding="utf-8") as f:
         total = 0
         if args.source == "wikipedia":
-            total += collect_wikipedia(f, args.target_chars, args.batch_size, args.min_len, args.sleep)
+            total += collect_wikipedia(f, args.target_chars, args.batch_size, args.min_len, args.sleep, args.workers)
         elif args.source == "aozora":
             total += collect_aozora(f, args.target_chars, args.min_len, args.sleep)
         else:  # both: 半分ずつ配分する
             half = args.target_chars // 2
-            total += collect_wikipedia(f, half, args.batch_size, args.min_len, args.sleep)
+            total += collect_wikipedia(f, half, args.batch_size, args.min_len, args.sleep, args.workers)
             total += collect_aozora(f, args.target_chars - half, args.min_len, args.sleep)
 
     regenerate_sources_markdown()

@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>学習操作パネル</title>
+<style>
+  body { font-family: sans-serif; max-width: 800px; margin: 40px auto; padding: 0 16px; }
+  section { border: 1px solid #ccc; border-radius: 6px; padding: 15px; margin-bottom: 20px; }
+  pre { background: #111; color: #0f0; padding: 10px; height: 220px; overflow-y: auto; white-space: pre-wrap; border-radius: 6px; }
+  label { display: inline-block; width: 140px; }
+  button { padding: 6px 14px; }
+</style>
+</head>
+<body>
+<h1>学習操作パネル</h1>
+<p><a href="/">チャットへ戻る</a></p>
+<p style="color:#a00">※3つのジョブは同時に実行できません(1つずつ順番に実行してください)。</p>
+
+<section>
+  <h2>1. コーパス収集 (build_corpus)</h2>
+  <label>収集元</label>
+  <select id="bc-source">
+    <option value="both">both (Wikipedia+青空文庫)</option>
+    <option value="wikipedia">wikipedia</option>
+    <option value="aozora">aozora</option>
+  </select><br><br>
+  <label>目標文字数</label>
+  <input type="number" id="bc-target" value="1000000"><br><br>
+  <button onclick="startBuildCorpus()">実行</button>
+  <span id="status-build_corpus"></span>
+  <pre id="log-build_corpus"></pre>
+</section>
+
+<section>
+  <h2>2. 事前学習 (pretrain)</h2>
+  <label>max_steps</label>
+  <input type="number" id="pt-steps" value="5000"><br><br>
+  <button onclick="startPretrain()">実行</button>
+  <span id="status-pretrain"></span>
+  <pre id="log-pretrain"></pre>
+</section>
+
+<section>
+  <h2>3. ファインチューニング (finetune)</h2>
+  <label>max_steps</label>
+  <input type="number" id="ft-steps" value="3000"><br><br>
+  <button onclick="startFinetune()">実行</button>
+  <span id="status-finetune"></span>
+  <pre id="log-finetune"></pre>
+</section>
+
+<script>
+async function startJob(name, params) {
+  const res = await fetch("/api/train/start", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ job: name, params }),
+  });
+  const data = await res.json();
+  if (data.error) alert(data.error);
+}
+
+function startBuildCorpus() {
+  startJob("build_corpus", {
+    source: document.getElementById("bc-source").value,
+    target_chars: parseInt(document.getElementById("bc-target").value, 10),
+  });
+}
+
+function startPretrain() {
+  startJob("pretrain", { max_steps: parseInt(document.getElementById("pt-steps").value, 10) });
+}
+
+function startFinetune() {
+  startJob("finetune", { max_steps: parseInt(document.getElementById("ft-steps").value, 10) });
+}
+
+async function pollStatus() {
+  const res = await fetch("/api/train/status");
+  const data = await res.json();
+  for (const name of ["build_corpus", "pretrain", "finetune"]) {
+    const logEl = document.getElementById("log-" + name);
+    const statusEl = document.getElementById("status-" + name);
+    if (data[name]) {
+      logEl.textContent = data[name].log;
+      logEl.scrollTop = logEl.scrollHeight;
+      statusEl.textContent = data[name].running
+        ? "実行中..."
+        : (data[name].returncode === 0 ? "完了" : data[name].returncode !== null ? "エラー終了" : "");
+    }
+  }
+}
+setInterval(pollStatus, 2000);
+pollStatus();
+</script>
+</body>
+</html>

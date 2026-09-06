@@ -17,6 +17,8 @@ PyTorchでフルスクラッチ実装し、自分のデータで学習させる�
         build_corpus.py  Wikipedia日本語版・青空文庫から事前学習コーパスを収集するスクリプト
     train.py           学習スクリプト (事前学習・ファインチューニング両対応)
     chat.py            学習済みモデルと会話するCLI
+    webapp.py          ブラウザで会話・学習操作ができるWebアプリ (Flask)
+    templates/         webapp.py用のHTMLテンプレート
     checkpoints/       学習後に生成される (pretrain.pt, model.pt, vocab.json)
 ```
 
@@ -94,6 +96,19 @@ python train.py --stage finetune --data data/conversations.txt
 ```bash
 python chat.py
 ```
+
+## ブラウザGUI
+
+CLIの代わりに、ブラウザから会話・学習操作ができるWebアプリも用意しています。
+
+```bash
+python webapp.py
+```
+
+`http://127.0.0.1:5000` を開くと会話画面、`/train` で学習操作パネル
+(コーパス収集・事前学習・ファインチューニングをブラウザから実行し、
+ログをリアルタイムで確認できる)にアクセスできます。3つのジョブは
+同時実行できないため、1つずつ順番に実行してください。
 
 ## アーキテクチャの仕組み
 

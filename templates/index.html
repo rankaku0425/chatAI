@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>chatAI</title>
+<style>
+  body { font-family: sans-serif; max-width: 700px; margin: 40px auto; padding: 0 16px; }
+  #log { border: 1px solid #ccc; border-radius: 6px; padding: 10px; height: 400px; overflow-y: auto; }
+  #log p { margin: 4px 0; white-space: pre-wrap; }
+  .user { color: #06c; }
+  .ai { color: #090; }
+  form { display: flex; gap: 8px; margin-top: 10px; }
+  input[type=text] { flex: 1; padding: 8px; }
+  button { padding: 8px 14px; }
+</style>
+</head>
+<body>
+<h1>chatAI</h1>
+<p><a href="/train">学習操作パネルへ</a></p>
+<div id="log"></div>
+<form id="chat-form">
+  <input type="text" id="message" autocomplete="off" placeholder="メッセージを入力">
+  <button type="submit">送信</button>
+  <button type="button" id="reset">会話リセット</button>
+</form>
+
+<script>
+const log = document.getElementById("log");
+const form = document.getElementById("chat-form");
+const input = document.getElementById("message");
+
+function append(role, text) {
+  const p = document.createElement("p");
+  p.className = role;
+  p.textContent = (role === "user" ? "User: " : "AI: ") + text;
+  log.appendChild(p);
+  log.scrollTop = log.scrollHeight;
+}
+
+form.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const message = input.value.trim();
+  if (!message) return;
+  append("user", message);
+  input.value = "";
+
+  const res = await fetch("/api/chat", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ message }),
+  });
+  const data = await res.json();
+  append("ai", data.error ? "[エラー] " + data.error : data.reply);
+});
+
+document.getElementById("reset").addEventListener("click", async () => {
+  await fetch("/api/chat/reset", { method: "POST" });
+  log.innerHTML = "";
+});
+</script>
+</body>
+</html>
